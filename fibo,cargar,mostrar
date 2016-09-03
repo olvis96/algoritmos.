@@ -1,0 +1,63 @@
+// fibo.cpp : Defines the entry point for the console application.
+//
+
+#include"stdafx.h"
+#include<iostream>
+#include "conio.h"
+#define MAX 100
+using namespace std;
+void cargar(int vec[],int tam);
+void mostrar(int vec[],int tam);
+int fibo(int n);
+
+void main()
+{
+    cout<<"\n         FIBONACCI \n\n";
+    
+    int i, num, vec[MAX];
+    
+    do
+    {
+        cout<<"Ingrese un numero entero y positivo: ";
+        cin>>num;
+        
+    } while(num < 0);
+
+    cargar( vec,num );
+    mostrar(vec, num);
+    cout<<"\nLa serie es: \n\n\t";
+    
+    for(i=0; i<num; i++)
+    {
+       if(fibo(i) != 0)
+          cout<< ", "; 
+        
+        cout<< fibo(i);       
+    }
+    
+    getch();
+}
+void cargar(int vec[],int tam)
+{
+	for(int i=0;i<tam;i++)
+	{
+		
+		cout<< "Ingrese el valor para vec["<< i << "]=";
+		cin>> vec[i];
+	}
+}
+void mostrar(int vec[],int tam)
+{   
+	for(int i=0;i<tam;i++)
+	{
+		cout<< "vec["<< i << "]=";
+		cout<< vec[i]<<endl;
+	}
+}
+int fibo(int n)
+{
+    if(n == 0 || n == 1)
+       return n;
+    else
+       return fibo(n - 2) + fibo(n - 1);
+}
