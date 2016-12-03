@@ -1,0 +1,2452 @@
+// hoteles.cpp: define el punto de entrada de la aplicación de consola.
+//
+
+#include "stdafx.h"
+#include "stdio.h"
+#include "conio.h"
+#include <iostream>
+#include <iomanip>
+#include <string.h>
+#include <ctype.h>
+using namespace std;
+
+bool session = false;
+////  cliente ,  destinos, reserva,  informes gerenciales
+
+struct regCliente
+{
+	int IdCliente;
+	char nombre[30];
+	char nit[10];
+	char email[80];
+	char estado;
+};
+
+
+
+
+struct regDestinos
+{
+	int IdDestinos;
+	char ciudad[30];
+	char hotel[60];
+	int stockhabS; //150
+	int stockhabD; //100
+	int stockhabM; //200
+	char estado;
+};
+
+
+struct regReserva
+{
+	int IdReserva;
+	int IdCliente;
+	int celular;
+	int IdDestino;
+	char lturistico[60];
+	int dias;
+	char fechas[30];
+	int HabS;
+	int HabD;
+	int HabM;
+	float Importe;
+	char estado;
+};
+
+
+///////////////////////////////////////////////////////////////////////////////////////////1
+
+
+void EnteroLiteral(int n,char cad[])
+{
+	int dig;
+	char num[20],dec[20],cent[20];
+
+	strcpy(cad,"");
+	strcpy(num,"");
+	strcpy(dec,"");
+	strcpy(cent,"");
+	if(n==0)
+	{
+		strcpy(num,"cero");
+	}
+	dig=n%10;
+	n=n/10;
+	if(dig != 0)
+	{
+		if(dig == 1)
+		{	
+			if(n == 0)
+			{
+				strcpy(num,"un");
+			}
+			else if(n%10 == 1)
+			{
+				strcpy(dec,"once");
+			}
+			else
+			{
+				strcpy(num,"uno");
+			}
+		}
+		if(dig == 2)
+		{
+			if(n%10 == 1)
+			{
+				strcpy(dec,"doce");
+			}
+			else
+			{
+				strcpy(num,"dos");
+			}
+		}
+		if(dig == 3)
+		{
+			if(n%10 == 1)
+			{
+				strcpy(dec,"trece");
+			}
+			else
+			{
+				strcpy(num,"tres");
+			}
+		}
+		if(dig == 4)
+		{
+			if(n%10 == 1)
+			{
+				strcpy(dec,"catorce");
+			}
+			else
+			{
+				strcpy(num,"cuatro");
+			}
+		}
+		if(dig == 5)
+		{
+			if(n%10 == 1)
+			{
+				strcpy(dec,"quince");
+			}
+			else
+			{
+				strcpy(num,"cinco");
+			}
+		}
+		if(dig == 6)
+		{
+			if(n%10 == 1)
+			{
+				strcpy(dec,"dieciseis");
+			}
+			else
+			{
+				strcpy(num,"seis");
+			}
+		}
+		if(dig == 7)
+		{
+			if(n%10 == 1)
+			{
+				strcpy(dec,"diecisiete");
+			}
+			else
+			{
+				strcpy(num,"siete");
+			}
+		}
+		if(dig == 8)
+		{
+			if(n%10 == 1)
+			{
+				strcpy(dec,"dieciocho");
+			}
+			else
+			{
+				strcpy(num,"ocho");
+			}
+		}
+		if(dig == 9)
+		{
+			if(n%10 == 1)
+			{
+				strcpy(dec,"diecinueve");
+			}
+			else
+			{
+				strcpy(num,"nueve");
+			}
+		}
+	}
+
+	dig=n%10;
+	if(dig != 0 && strlen(dec) == 0)
+	{
+		if(dig == 1)
+		{
+			strcpy(dec,"diez ");
+		}
+		if(dig == 2)
+		{
+			strcpy(dec,"veinte ");
+		}
+		if(dig == 3)
+		{
+			strcpy(dec,"treinta ");
+		}
+		if(dig == 4)
+		{
+			strcpy(dec,"cuarenta ");
+		}
+		if(dig == 5)
+		{
+			strcpy(dec,"cincuenta ");
+		}
+		if(dig == 6)
+		{
+			strcpy(dec,"sesenta ");
+		}
+		if(dig == 7)
+		{
+			strcpy(dec,"setenta ");
+		}
+		if(dig == 8)
+		{
+			strcpy(dec,"ochenta ");
+		}
+		if(dig == 9)
+		{
+			strcpy(dec,"noventa ");
+		}
+	}
+	n=n/10;
+
+	dig=n%10;
+	if(dig != 0)
+	{
+		if(dig == 1)
+		{
+			if(strlen(dec)== 0 &&strlen(num)==0)
+			{
+				strcpy(cent,"cien ");
+			}
+			else
+			{
+				strcpy(cent,"ciento ");
+			}
+		}
+		if(dig == 2)
+		{
+			strcpy(cent,"doscientos ");
+		}
+		if(dig == 3)
+		{
+			strcpy(cent,"trescientos ");
+		}
+		if(dig == 4)
+		{
+			strcpy(cent,"cuatroscientos ");
+		}
+		if(dig == 5)
+		{
+			strcpy(cent,"quinientos ");
+		}
+		if(dig == 6)
+		{
+			strcpy(cent,"seiscientos ");
+		}
+		if(dig == 7)
+		{
+			strcpy(cent,"setescientos ");
+		}
+		if(dig == 8)
+		{
+			strcpy(cent,"ochoscientos ");
+		}
+		if(dig == 9)
+		{
+			strcpy(cent,"novescientos ");
+		}
+	}
+	strcpy(cad,cent);
+	strcat(cad,dec);
+	if(strlen(dec) > 0 && strlen(num) > 0)
+	{
+		strcat(cad," y ");
+	}
+	strcat(cad,num);
+}
+
+void RealLiteral(float f,char cad[],char unidades[])
+{
+	char mil[50],cent[50],deci[50];
+	strcpy(mil,"");
+	strcpy(cent,"");
+	strcpy(deci,"");
+	strcpy(cad,"");
+	int n;
+	n = f;
+	if(n/1000 != 0)
+	{
+		EnteroLiteral(n/1000,mil);
+	}
+	if(n%1000 != 0)
+	{
+		EnteroLiteral(n%1000,cent);
+	}
+	f = (f - n) * 100;
+	n = f;
+	if(n != 0)
+	{
+		EnteroLiteral(n,deci);
+	}
+	if(strlen(mil)>0)
+	{
+		strcat(cad,mil);
+		strcat(cad," mil ");
+	}
+	if(strlen(cent)>0)
+	{
+		strcat(cad,cent);
+	}
+	if(strlen(mil)>0 || strlen(cent)>0)
+	{
+		strcat(cad," ");
+		strcat(cad,unidades);
+		strcat(cad," ");
+	}
+	if(strlen(deci)>0)
+	{
+		if(strlen(mil)>0 || strlen(cent)>0)
+		{
+			strcat(cad," con ");
+		}
+		strcat(cad,deci);
+		strcat(cad," centavos");
+	}
+}
+
+
+//VALIDACIONES PARA ELIMINAR
+bool verificarClienteEnReserva(int Cliente)
+{
+	FILE*ptr;
+	regReserva reg;
+	bool k=false;
+	ptr=fopen("reserva.dat","rb");
+	if(ptr!=NULL)
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		while(!feof(ptr))
+		{
+			if(Cliente==reg.IdCliente && reg.estado == 'A')
+			{
+				k=true;
+			}
+
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+
+		fclose(ptr);
+	}
+
+	return(k);
+}
+
+bool verificarDestinoEnReserva(int Destino)
+{
+	FILE*ptr;
+	regReserva reg;
+	bool k=false;
+	ptr=fopen("reserva.dat","rb");
+	if(ptr!=NULL)
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		while(!feof(ptr))
+		{
+			if(Destino==reg.IdDestino && reg.estado == 'A')
+			{
+				k=true;
+			}
+
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+
+		fclose(ptr);
+	}
+
+	return(k);
+}
+
+
+
+
+
+// TODO LO REFERENTE A CLIENTES
+//Validaciones
+//Validacion de Nombre solo letras
+bool validarNombres (char cadena[])
+{
+	int a, i=0;
+	bool val=true;
+	a= strlen(cadena);
+	while(i<a && val==true) 
+	{
+		if(isalpha(cadena[i])!=0 || cadena[i]==' ')
+		{
+			i++;
+		}
+		else
+		{
+			val=false;
+		}
+	}
+	return(val);
+}
+
+//Validacion de Email tenga @ y .
+bool validarEmail(char cad[])
+{
+	int n=strlen(cad),i,arr=0,punto=0;
+	for(i=0;i<n;i++)
+	{
+		if(cad[i]!='@' && cad[i] !='.' && cad[i]!='_'&&cad[i]!='-')
+			if(cad[i]!=-92 && cad[i]!=-91)
+				if(!((cad[i]>96 && cad[i]<123) || (cad[i]>64 && cad[i]<91)))
+					if(!(cad[i]>='0' && cad[i]<='9'))
+					return false;
+		if(cad[i]=='@')
+			arr++;
+		if(cad[i]=='.')
+			punto++;
+	}
+	if(punto>0)
+		if(arr==1)
+			return true;
+	return false;
+}
+
+
+//Validacion de Nit solo numeros
+bool validarNitCliente (char cadena[])
+{
+	int a, i=0;
+	bool val=true;
+	a= strlen(cadena);
+	while(i<a && val==true) 
+	{
+		if(isalpha(cadena[i])!=0 || cadena[i]==' ')
+		{
+			i++;
+		}
+		else
+		{
+			val=false;
+		}
+	}
+	return(val);
+}
+
+//Validacion de solo numeros
+int validar(char cad[])
+{
+	int a,i=0,val=0;
+	a=strlen(cad);
+	while(i<a && val==0)
+	{
+		if(isdigit(cad[i]))
+		{
+			i++;
+		}
+		else
+		{
+			val=1;
+		}
+	}
+	return(val);
+}
+
+//Validacion de IdCliente no repetir
+bool verificarRepCliente(int Cliente)
+{
+	FILE*ptr;
+	regCliente reg;
+	bool k=true;
+	ptr=fopen("cliente.dat","rb");
+	if(ptr!=NULL)
+	{
+
+		fread(&reg,sizeof(reg),1,ptr);
+		while(!feof(ptr))
+		{
+			if(Cliente==reg.IdCliente && reg.estado == 'A')
+			{
+				k=false;
+			}
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+		fclose(ptr);
+	}
+	return(k);
+}
+
+//Fin de validaciones 
+void crearArchivocliente()
+{
+	FILE*ptr;
+	ptr=fopen("cliente.dat","wb");
+	fclose(ptr);
+}
+
+bool is_number (char a[], int n)
+{
+	n--;
+	for(int i=0; i<n; i++)
+	{
+		if(a[i]<48 || a[i]>57) 
+			return false;
+	}
+	return true;
+}
+
+bool is_fecha(char a[]) 
+{
+	int n=strlen(a); 
+	char cad1[3],cad2[3],cad3[5]; 
+	strcpy(cad1,"");
+	strcpy(cad2,"");
+	strcpy(cad3,"");
+
+	fflush(stdin);
+	strncpy (cad1,a,2);
+	strncpy (cad2,a+3,2); 
+	strncpy (cad3,a+6,4);
+	
+	cad1[2] = '\0';
+	cad2[2] = '\0';
+	cad3[4] = '\0';
+
+	if (a[2]=='-'&&a[5]=='-' && is_number(cad1,strlen(cad1)) && is_number(cad2,strlen(cad2)) && is_number(cad3,4) )
+	{
+		int dia = 0; 
+		int mes = 0;
+		int anho = 0;  
+		for (int i=0;i<=1;i++)
+		{
+			dia = dia*10+(a[i]-'0');
+		}
+		for (int i=3;i<=4;i++)
+		{
+			mes = mes*10+(a[i]-'0');
+		}
+		for (int i=6;i<=9;i++)
+		{
+			anho = anho*10+(a[i]-'0');
+		}
+		if ( mes>0 && mes<=7)
+		{
+			if(mes%2==0)
+			{
+				if (mes==2)
+				{
+					return dia<=28; 
+				}
+				else return dia<=31 ; 
+			}
+			else 
+			{
+				return dia<=30; 
+			}
+		}
+		else 
+		{
+			if(mes>07 && mes<=12)
+			{
+				if (mes%2==0) 
+				{
+					return dia<=31;
+				}
+				else
+				{
+					return dia<=30; 
+				}
+			}
+			else return false; 
+		}
+	}
+	else return false; 
+}
+
+bool bisiesto(unsigned int ano)
+{
+	if(((ano%4==0) && (ano%100!=0)) || (ano%400==0)) return true;
+	return false;
+}
+
+enum e
+{
+	ENERO,FEBRERO,MARZO,ABRIL,MAYO,JUNIO,JULIO,AGOSTO,SEPTIEMBRE,OCTUBRE,NOVIEMBRE,DICIEMBRE
+};
+
+int diasdelmes(int mes,int ano)
+{
+	int diasmes;
+	switch(mes){
+		case ENERO:
+		case MARZO: 
+		case MAYO:
+		case JULIO: 
+		case AGOSTO: 
+		case OCTUBRE:
+		case DICIEMBRE: 
+			diasmes=31; break; 
+		case FEBRERO: 
+			if(bisiesto(ano)) diasmes=29; 
+			else diasmes=28;
+			break;
+		case ABRIL: 
+		case JUNIO: 
+		case SEPTIEMBRE: 
+		case NOVIEMBRE: 
+			diasmes=30; break;
+	}
+
+	return diasmes;
+}
+
+
+void LeerFecha(char fecha[11],unsigned int &ano,unsigned int &mes,unsigned int &dia)
+{
+	char cano[5],cmes[3],cdia[3];
+
+	cdia[0]=fecha[0];	cdia[1]=fecha[1];	cdia[2]='\0';
+	cmes[0]=fecha[3];	cmes[1]=fecha[4];	cmes[2]='\0';
+	cano[0]=fecha[6];	cano[1]=fecha[7];   cano[2]=fecha[8];	cano[3]=fecha[9];	cano[4]='\0';
+
+	dia=atoi(cdia);
+	mes=atoi(cmes);
+	ano=atoi(cano);
+}
+
+
+bool VerificarRangoFechas(char fecha1[],char fecha2[]){
+
+	unsigned int ano1,mes1,dia1;
+	unsigned int ano2,mes2,dia2;
+
+	LeerFecha(fecha1,ano1,mes1,dia1);
+	LeerFecha(fecha2,ano2,mes2,dia2);
+	if(ano2<ano1) return false;
+	else if(ano2==ano1)
+	{
+		if(mes2<mes1) return false;
+		else if(mes2==mes1) 
+		{
+			if(dia2<dia1) return false;
+		}
+	}
+
+	return true;
+}
+
+void adicionarRegistrocliente()
+{
+	FILE*ptr;
+	regCliente reg;
+	int val;
+	char aux[30];
+	ptr=fopen("cliente.dat","ab");
+	if(ptr!=NULL)
+	{
+		do
+		{
+			cout<<"Ingrese IdCliente: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		reg.IdCliente=atoi(aux);
+		while(!verificarRepCliente(reg.IdCliente)) 
+		{
+			do
+			{
+				cout<<"Ingrese IdCliente: ";
+				do
+				{
+
+					gets(aux);
+				}
+				while(strlen(aux)==0);
+			}
+			while((validar(aux)==1));
+			reg.IdCliente=atoi(aux);
+		}
+		cout<<"Ingrese nombre del cliente: ";
+		do
+		{
+			gets(reg.nombre);
+		}
+		while(strlen(reg.nombre)==0);
+		while(validarNombres(reg.nombre) == false)
+		{
+			cout<<"Ingrese nombre del cliente: ";
+			gets(reg.nombre);
+		}
+
+		cout<<"Ingrese email del cliente: ";
+		do
+		{
+			gets(reg.email);
+		}
+		while(strlen(reg.email)==0);
+		while(validarEmail(reg.email) == false)
+		{
+			cout<<"Ingrese email del cliente: ";
+			gets(reg.email);
+		}
+
+		cout<<"Ingrese nit del cliente: ";
+		do
+		{
+
+			gets(reg.nit);
+			val=validar(reg.nit);
+		}
+		while(strlen(reg.nit)==0);
+		while(val==1)
+		{
+			cout<<"Ingrese nit del cliente: ";
+			gets(reg.nit);
+			val=validar(reg.nit);
+		}
+		reg.estado='A';
+		fwrite(&reg,sizeof(reg),1,ptr);
+		cout<<"Registro fue adicionado exitosamente.";
+		fclose(ptr);
+	}
+	else
+	{
+		cout<<"El archivo no existe.";
+	}
+
+}
+
+
+void modificarRegistrocliente(int nReg)
+{
+	FILE*ptr;
+	int val;
+	char aux[30];
+	regCliente reg;
+	ptr=fopen("cliente.dat","r+b");
+	if(ptr!=NULL)
+	{
+		fseek(ptr,(nReg-1)*sizeof(reg),SEEK_SET);
+		fread(&reg,sizeof(reg),1,ptr);
+		if(!feof(ptr))
+		{
+			if(reg.estado=='A')
+			{
+				cout<<"Ingrese nombre del cliente: ";
+				do
+				{
+					gets(reg.nombre);
+				}
+				while(strlen(reg.nombre)==0);
+				while(!validarNombres(reg.nombre))
+				{
+					cout<<"Ingrese nombre del cliente: ";
+					gets(reg.nombre);
+				}
+
+				cout<<"Ingrese email del cliente: ";
+				do
+				{
+					gets(reg.email);
+				}
+				while(strlen(reg.email)==0);
+				while(validarEmail(reg.email) == false)
+				{
+					cout<<"Ingrese email del cliente: ";
+					gets(reg.email);
+				}
+
+				cout<<"Ingrese nit del cliente: ";
+				do
+				{
+					gets(reg.nit);
+					val=validar(reg.nit);
+				}
+				while(strlen(reg.nit)==0);
+				while(val==1)
+				{
+					cout<<"Ingrese nit del cliente: ";
+					gets(reg.nit);
+					val=validar(reg.nit);
+				}
+
+				reg.estado='A';
+				fseek(ptr,(nReg-1)*sizeof(reg),SEEK_SET);
+				fwrite(&reg,sizeof(reg),1,ptr);
+				cout<<"Registro fue modificado exitosamente.";
+			}
+
+			else 
+			{
+				cout<<"El registro no existe fue eliminado";
+			}
+
+		}
+
+		fclose(ptr);
+	}
+
+	else
+	{
+		cout<<"El archivo no existe.";
+	}
+
+	getch();
+}
+
+
+void eliminarRegistrocliente(int nReg)
+{
+	FILE*ptr;
+	regCliente reg;
+	ptr=fopen("cliente.dat","r+b");
+	if(ptr!=NULL)
+	{
+		fseek(ptr,(nReg-1)*sizeof(reg),SEEK_SET);
+		fread(&reg,sizeof(reg),1,ptr);
+		if(!feof(ptr))
+		{
+			if(reg.estado=='A')
+			{
+				if(verificarClienteEnReserva(reg.IdCliente))
+				{
+					cout<<"El cliente no puede ser eliminado porque existe en Reserva"<<endl;
+				}
+				else
+				{
+					reg.estado='E';
+					fseek(ptr,(nReg-1)*sizeof(reg),SEEK_SET);
+					fwrite(&reg,sizeof(reg),1,ptr);
+					cout<<"Registro fue eliminado exitosamente.";
+				}
+			}
+			else 
+			{
+				cout<<"El registro fue eliminado.....";
+			}
+		}
+		else
+		{
+			cout<<"El registro no existe.";
+		}
+
+		fclose(ptr);
+	}
+
+	else
+	{
+		cout<<"El archivo no existe.";
+	}
+
+	getch();
+}
+
+void mostrarRegistrocliente(regCliente reg,int numeroReg)
+{
+	cout<<endl<<left<<numeroReg<<".-"<<'\t'<<setw(15)<<reg.IdCliente<<setw(30)<<reg.nombre<<setw(15)<<reg.nit<<setw(30)<<reg.email;
+}
+
+
+void buscarRegistrocliente(int nReg)
+{
+	FILE*ptr;
+	regCliente reg;
+	ptr=fopen("cliente.dat","rb");
+	if(ptr!=NULL)
+	{
+		fseek(ptr,(nReg-1)*sizeof(reg),SEEK_SET);
+		fread(&reg,sizeof(reg),1,ptr);
+		if(!feof(ptr))
+		{
+			if(reg.estado=='A')
+			{
+				mostrarRegistrocliente(reg,nReg);
+			}
+
+			else 
+			{
+				cout<<"El registro fue eliminado.";
+			}
+		}
+		else 
+		{
+			cout<<"El registro no existe.";
+		}
+		fclose(ptr);
+	}
+	else
+	{
+		cout<<"El archivo no existe`.....";
+	}
+	getch();
+}
+
+
+void listarArchivocliente()
+{
+	FILE*ptr;
+	regCliente reg;
+	int cont=1;
+	ptr=fopen("cliente.dat","rb");
+	if(ptr!=NULL)
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		system("cls");
+		cout<<endl<<"************************************************      CLIENTES     ***********************************************";
+		cout<<endl<<"        IdCliente		 Nombre            Nit	    E-mail               ";
+		cout<<endl<<"==================================================================================================================";
+		while(!feof(ptr))
+		{
+			if(reg.estado=='A')
+			{
+				mostrarRegistrocliente(reg,cont);
+			}
+
+			fread(&reg,sizeof(reg),1,ptr);
+			cont++;
+		}
+		fclose(ptr);
+	}
+	else 
+	{
+		cout<<"El archivo no existe.....";
+	}
+	getch();
+}
+
+void listarArchivoclienteTexto()
+{
+	FILE* ptr;
+	FILE* txt;
+	regCliente reg;
+	int cont=1;
+	ptr=fopen("cliente.dat","rb");
+	txt=fopen("cliente.txt","wt");
+	if(ptr!=NULL)
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		system("cls");
+		fprintf(txt,"\n******************************      CLIENTES     ********************************");
+		fprintf(txt,"\n        IdCliente		 Nombre            Nit	    E-mail               ");
+		fprintf(txt,"\n===================================================================================");
+		while(!feof(ptr))
+		{
+			if(reg.estado=='A')
+			{
+				fprintf(txt,"\n%d.-	%d	%-30s	%s	%s",cont,reg.IdCliente,reg.nombre,reg.nit,reg.email);
+			}
+
+			fread(&reg,sizeof(reg),1,ptr);
+			cont++;
+		}
+		fclose(txt);
+		fclose(ptr);
+		system("cliente.txt");
+	}
+	else 
+	{
+		cout<<"El archivo no existe.....";
+	}
+	getch();
+}
+
+void menuCliente()
+{
+	int opcion=0,nReg=0;
+	char aux[30];
+	do
+	{
+		system("cls");
+		cout<<"****** M E N U   C L I E N T E ******"<<endl;
+		cout<<"1.- Crear archivo"<<endl;
+		cout<<"2.- Adicionar Registro"<<endl;
+		cout<<"3.- Modificar Registro"<<endl;
+		cout<<"4.- Eliminar Registro"<<endl;
+		cout<<"5.- Buscar por numero de registro"<<endl;
+		cout<<"6.- Listar todo el archivo"<<endl;
+		cout<<"7.- Listar todo el archivo para imprimir"<<endl;
+		cout<<"0.- Salir"<<endl;
+		do
+		{
+			cout<<"Seleccion una opcion: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		opcion=atoi(aux);
+		switch(opcion)
+		{
+case 1: crearArchivocliente();
+	break;
+case 2: adicionarRegistrocliente();
+	break;
+case 3: cout<<"\nIngresar numero de registro a modificar : ";
+	cin>>nReg; 
+	modificarRegistrocliente(nReg); 
+	break;
+case 4: cout<<"\nIngresar numero de registro a Eliminar : "; 
+	cin>>nReg; 
+	eliminarRegistrocliente(nReg);
+	break;
+case 5: cout<<"\nIngresar numero de registro a Buscar : "; 
+	cin>>nReg; 
+	buscarRegistrocliente(nReg);
+	break;
+case 6: listarArchivocliente();
+	break;
+case 7: listarArchivoclienteTexto();
+	break;
+		}
+
+	}
+	while(opcion!=0);
+}
+
+//FIN DE LA PARTE DE CLIENTE
+
+
+float CalcularPrecio(float cantidad,int Producto)
+{
+	FILE*ptr;
+	regProducto reg;
+	float Precio;
+	ptr=fopen("producto.dat","rb");
+	if(ptr!=NULL)
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		while(!feof(ptr))
+		{
+			if(Producto==reg.IdProd)
+			{
+				Precio=cantidad*reg.Precio_Unit;
+			}
+
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+
+		fclose(ptr);
+	}
+
+	return(Precio);
+
+}
+
+//Validacion de solo numeros
+int validar5(char cad[]){
+
+	int a,i=0,val=0;
+	a=strlen(cad);
+	while(i<a && val==0){
+
+		if(isdigit(cad[i])){
+
+			i++;
+		}
+		else{
+
+			val=1;
+		}
+
+	}
+
+	return(val);
+}
+
+//Validacion de IdProducto repetir
+bool verificarProducto2(int Producto)
+{
+	FILE*ptr;
+	regProducto reg;
+	bool k=false;
+	ptr=fopen("producto.dat","rb");
+	if(ptr!=NULL)
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		while(!feof(ptr))
+		{
+			if(Producto==reg.IdProd)
+			{
+				k=true;
+			}
+
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+
+		fclose(ptr);
+	}
+
+	return(k);
+}
+
+//Validacion de IdCompras no repetir
+bool verificarRepCompras(int Compras)
+{
+	FILE*ptr;
+	regCompras reg;
+	bool k=true;
+	ptr=fopen("compras.dat","rb");
+	if(ptr!=NULL)
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		while(!feof(ptr))
+		{
+			if(Compras==reg.IdCompras && reg.estado == 'A')
+			{
+				k=false;
+			}
+
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+
+		fclose(ptr);
+	}
+
+	return(k);
+}
+
+
+void Actualizar_cantidad(float x,int idproducto)
+{
+	FILE*ptr;
+	regProducto reg;
+	int c=1;
+	ptr=fopen("producto.dat","r+b");
+	if(ptr!=NULL)
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		while((!feof(ptr))&&(idproducto!=reg.IdProd))
+		{
+			fread(&reg,sizeof(reg),1,ptr);
+			c++;
+		}
+
+		reg.STOCK=reg.STOCK+x;
+		fseek(ptr,(c-1)*sizeof(reg),SEEK_SET);
+		fwrite(&reg,sizeof(reg),1,ptr);
+		fclose(ptr);
+	}
+
+}
+
+
+//Fin de validaciones 
+
+
+//Validacion de solo numeros
+
+
+//Validacion de IdProducto no repetir
+
+//Fin de validaciones 
+
+
+
+
+
+
+void crearArchivoventas()
+{
+	FILE*ptr;
+	ptr=fopen("ventas.dat","wb");
+	fclose(ptr);
+}
+
+
+
+regCliente obtClienteDat2(int Idcliente)
+{
+	FILE*ptr;
+	regCliente reg;
+	ptr=fopen("cliente.dat","rb");
+	if(ptr!=NULL)
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		while((!feof(ptr))&&(Idcliente!=reg.IdCliente))
+		{
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+
+		fclose(ptr);
+	}
+	return(reg);
+}
+
+
+
+
+void crearArchivoDestino()
+{
+	FILE*ptr;
+	ptr=fopen("destino.dat","wb");
+	fclose(ptr);
+}
+
+bool verificarRepDestino(int Destino)
+{
+	FILE*ptr;
+	regDestinos reg;
+	bool k=true;
+	ptr=fopen("destino.dat","rb");
+	if(ptr!=NULL)
+	{
+
+		fread(&reg,sizeof(reg),1,ptr);
+		while(!feof(ptr))
+		{
+			if(Destino==reg.IdDestinos && reg.estado == 'A')
+			{
+				k=false;
+			}
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+		fclose(ptr);
+	}
+	return(k);
+}
+
+void adicionarRegistroDestino()
+{
+	FILE*ptr;
+	regDestinos reg;
+	int val;
+	char aux[30];
+	ptr=fopen("destino.dat","ab");
+	if(ptr!=NULL)
+	{
+		do
+		{
+			cout<<"Ingrese IdDestino: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		reg.IdDestinos=atoi(aux);
+		while(!verificarRepDestino(reg.IdDestinos)) 
+		{
+			do
+			{
+				cout<<"Ingrese IdDestino: ";
+				do
+				{
+
+					gets(aux);
+				}
+				while(strlen(aux)==0);
+			}
+			while((validar(aux)==1));
+			reg.IdDestinos=atoi(aux);
+		}
+		cout<<"Ingrese ciudad: ";
+		do
+		{
+			gets(reg.ciudad);
+		}
+		while(strlen(reg.ciudad)==0);
+		while(validarNombres(reg.ciudad) == false)
+		{
+			cout<<"Ingrese ciudad: ";
+			gets(reg.ciudad);
+		}
+
+		cout<<"Ingrese nombre del hotel: ";
+		do
+		{
+			gets(reg.hotel);
+		}
+		while(strlen(reg.hotel)==0);
+		while(validarNombres(reg.hotel) == false)
+		{
+			cout<<"Ingrese nombre del hotel: ";
+			gets(reg.hotel);
+		}
+
+		reg.stockhabS =5;
+		reg.stockhabD =5;
+		reg.stockhabM =5;
+		reg.estado='A';
+		fwrite(&reg,sizeof(reg),1,ptr);
+		cout<<"Registro fue adicionado exitosamente.";
+		fclose(ptr);
+	}
+	else
+	{
+		cout<<"El archivo no existe.";
+	}
+
+}
+
+
+
+void modificarRegistroDestino(int nReg)
+{
+	FILE*ptr;
+	int val;
+	char aux[30];
+	regDestinos reg;
+	ptr=fopen("destino.dat","r+b");
+	if(ptr!=NULL)
+	{
+		fseek(ptr,(nReg-1)*sizeof(reg),SEEK_SET);
+		fread(&reg,sizeof(reg),1,ptr);
+		if(!feof(ptr))
+		{
+			if(reg.estado=='A')
+			{
+				
+		cout<<"Ingrese ciudad: ";
+		do
+		{
+			gets(reg.ciudad);
+		}
+		while(strlen(reg.ciudad)==0);
+		while(validarNombres(reg.ciudad) == false)
+		{
+			cout<<"Ingrese ciudad: ";
+			gets(reg.ciudad);
+		}
+
+		cout<<"Ingrese nombre del hotel: ";
+		do
+		{
+			gets(reg.hotel);
+		}
+		while(strlen(reg.hotel)==0);
+		while(validarNombres(reg.hotel) == false)
+		{
+			cout<<"Ingrese nombre del hotel: ";
+			gets(reg.hotel);
+		}
+				reg.estado='A';
+				fseek(ptr,(nReg-1)*sizeof(reg),SEEK_SET);
+				fwrite(&reg,sizeof(reg),1,ptr);
+				cout<<"Registro fue modificado exitosamente.";
+			}
+
+			else 
+			{
+				cout<<"El registro no existe fue eliminado";
+			}
+
+		}
+
+		fclose(ptr);
+	}
+
+	else
+	{
+		cout<<"El archivo no existe.";
+	}
+
+	getch();
+}
+
+
+void eliminarRegistroDestino(int nReg)
+{
+	FILE*ptr;
+	regDestinos reg;
+	ptr=fopen("destino.dat","r+b");
+	if(ptr!=NULL)
+	{
+		fseek(ptr,(nReg-1)*sizeof(reg),SEEK_SET);
+		fread(&reg,sizeof(reg),1,ptr);
+		if(!feof(ptr))
+		{
+			if(reg.estado=='A')
+			{
+				if(verificarDestinoEnReserva(reg.IdDestinos))
+				{
+					cout<<"El destino no puede ser eliminado porque existe en Reserva"<<endl;
+				}
+				else
+				{
+					reg.estado='E';
+					fseek(ptr,(nReg-1)*sizeof(reg),SEEK_SET);
+					fwrite(&reg,sizeof(reg),1,ptr);
+					cout<<"Registro fue eliminado exitosamente.";
+				}
+			}
+			else 
+			{
+				cout<<"El registro fue eliminado.....";
+			}
+		}
+		else
+		{
+			cout<<"El registro no existe.";
+		}
+
+		fclose(ptr);
+	}
+
+	else
+	{
+		cout<<"El archivo no existe.";
+	}
+
+	getch();
+}
+
+
+
+void mostrarRegistroDestino(regDestinos reg,int numeroReg)
+{
+	cout<<endl<<left<<numeroReg<<".-"<<'\t'<<setw(15)<<reg.IdDestinos<<setw(30)<<reg.ciudad<<setw(15)<<reg.hotel ;
+}
+
+
+void buscarRegistroDestino(int nReg)
+{
+	FILE*ptr;
+	regDestinos reg;
+	ptr=fopen("destino.dat","rb");
+	if(ptr!=NULL)
+	{
+		fseek(ptr,(nReg-1)*sizeof(reg),SEEK_SET);
+		fread(&reg,sizeof(reg),1,ptr);
+		if(!feof(ptr))
+		{
+			if(reg.estado=='A')
+			{
+				mostrarRegistroDestino(reg,nReg);
+			}
+
+			else 
+			{
+				cout<<"El registro fue eliminado.";
+			}
+		}
+		else 
+		{
+			cout<<"El registro no existe.";
+		}
+		fclose(ptr);
+	}
+	else
+	{
+		cout<<"El archivo no existe`.....";
+	}
+	getch();
+}
+
+
+void listarArchivoDestino()
+{
+	FILE*ptr;
+	regDestinos reg;
+	int cont=1;
+	ptr=fopen("destino.dat","rb");
+	if(ptr!=NULL)
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		system("cls");
+		cout<<endl<<"************************************************      DESTINOS     ***********************************************";
+		cout<<endl<<"        IdDestino		 Ciudad            Hotel	                   ";
+		cout<<endl<<"==================================================================================================================";
+		while(!feof(ptr))
+		{
+			if(reg.estado=='A')
+			{
+				mostrarRegistroDestino(reg,cont);
+			}
+
+			fread(&reg,sizeof(reg),1,ptr);
+			cont++;
+		}
+		fclose(ptr);
+	}
+	else 
+	{
+		cout<<"El archivo no existe.....";
+	}
+	getch();
+}
+
+void listarArchivodestinosTexto()
+{
+	FILE* ptr;
+	FILE* txt;
+	regDestinos reg;
+	int cont=1;
+	ptr=fopen("destino.dat","rb");
+	txt=fopen("destino.txt","wt");
+	if(ptr!=NULL)
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		system("cls");
+		fprintf(txt,"\n******************************      DESTINOS     ********************************");
+		fprintf(txt,"\n        IdDestino		 Ciudad            Destino	                   ");
+		fprintf(txt,"\n===================================================================================");
+		while(!feof(ptr))
+		{
+			if(reg.estado=='A')
+			{
+				fprintf(txt,"\n%d.-	%d	%s	%s",cont,reg.IdDestinos,reg.ciudad ,reg.hotel );
+			}
+
+			fread(&reg,sizeof(reg),1,ptr);
+			cont++;
+		}
+		fclose(txt);
+		fclose(ptr);
+		system("destino.txt");
+	}
+	else 
+	{
+		cout<<"El archivo no existe.....";
+	}
+	getch();
+}
+
+
+void menuDestinos()
+{
+	int opcion=0,nReg=0;
+	char aux[30];
+	do
+	{
+		system("cls");
+		cout<<"****** M E N U   D E S T I N O S ******"<<endl;
+		cout<<"1.- Crear archivo"<<endl;
+		cout<<"2.- Adicionar Registro"<<endl;
+		cout<<"3.- Modificar Registro"<<endl;
+		cout<<"4.- Eliminar Registro"<<endl;
+		cout<<"5.- Buscar por numero de registro"<<endl;
+		cout<<"6.- Listar todo el archivo"<<endl;
+		cout<<"7.- Listar todo el archivo para imprimir"<<endl;
+		cout<<"0.- Salir"<<endl;
+		do
+		{
+			cout<<"Seleccion una opcion: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		opcion=atoi(aux);
+		switch(opcion)
+		{
+case 1: crearArchivoDestino();
+	break;
+case 2: adicionarRegistroDestino();
+	break;
+case 3: cout<<"\nIngresar numero de registro a modificar : ";
+	cin>>nReg; 
+	modificarRegistroDestino(nReg); 
+	break;
+case 4: cout<<"\nIngresar numero de registro a Eliminar : "; 
+	cin>>nReg; 
+	eliminarRegistroDestino(nReg);
+	break;
+case 5: cout<<"\nIngresar numero de registro a Buscar : "; 
+	cin>>nReg; 
+	buscarRegistroDestino(nReg);
+	break;
+case 6: listarArchivoDestino();
+	break;
+case 7: listarArchivodestinosTexto();
+	break;
+		}
+
+	}
+	while(opcion!=0);
+}
+
+
+
+
+void crearArchivoreserva()
+{
+	FILE*ptr;
+	ptr=fopen("reserva.dat","wb");
+	fclose(ptr);
+}
+
+bool verificarRepreserva(int Reserva)
+{
+	FILE*ptr;
+	regReserva reg;
+	bool k=true;
+	ptr=fopen("reserva.dat","rb");
+	if(ptr!=NULL)
+	{
+
+		fread(&reg,sizeof(reg),1,ptr);
+		while(!feof(ptr))
+		{
+			if(Reserva ==reg.IdReserva && reg.estado == 'A')
+			{
+				k=false;
+			}
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+		fclose(ptr);
+	}
+	return(k);
+}
+
+void adicionarRegistroreserva()
+{
+	FILE*ptr;
+	regReserva reg;
+	int val;
+	char aux[30];
+	ptr=fopen("reserva.dat","ab");
+	if(ptr!=NULL)
+	{
+		do
+		{
+			cout<<"Ingrese IdReserva: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		reg.IdReserva=atoi(aux);
+		while(!verificarRepreserva(reg.IdReserva)) 
+		{
+			do
+			{
+				cout<<"Ingrese IdReserva: ";
+				do
+				{
+
+					gets(aux);
+				}
+				while(strlen(aux)==0);
+			}
+			while((validar(aux)==1));
+			reg.IdReserva=atoi(aux);
+		}
+		
+		
+		do
+		{
+			cout<<"Ingrese IdCliente: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		reg.IdCliente=atoi(aux);
+		while(verificarRepCliente (reg.IdCliente )) 
+		{
+			do
+			{
+				cout<<"Ingrese IdCliente: ";
+				do
+				{
+
+					gets(aux);
+				}
+				while(strlen(aux)==0);
+			}
+			while((validar(aux)==1));
+			reg.IdCliente=atoi(aux);
+		}
+		
+		
+		do
+		{
+			cout<<"Ingrese IdDestino: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		reg.IdDestino=atoi(aux);
+		while(verificarRepDestino (reg.IdDestino )) 
+		{
+			do
+			{
+				cout<<"Ingrese IdDestino: ";
+				do
+				{
+
+					gets(aux);
+				}
+				while(strlen(aux)==0);
+			}
+			while((validar(aux)==1));
+			reg.IdDestino=atoi(aux);
+		}
+		
+
+		do
+		{
+			cout<<"Ingrese telefono celular: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		reg.celular=atoi(aux);
+		
+
+		cout<<"Ingrese fecha de estadia: ";
+		do
+		{
+			gets(reg.fechas);
+		}
+		while(strlen(reg.fechas)==0);
+		while(is_fecha (reg.fechas) == false)
+		{
+			cout<<"Ingrese fecha de estadia: ";
+			gets(reg.fechas);
+		}
+
+		do
+		{
+			cout<<"Ingrese los dias de estadia: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		reg.dias=atoi(aux);
+		
+
+		cout<<"Ingrese lugar turistico a visitar: ";
+		do
+		{
+			gets(reg.lturistico);
+		}
+		while(strlen(reg.lturistico)==0);
+		while(validarNombres(reg.lturistico) == false)
+		{
+			cout<<"Ingrese lugar turistico a visitar: ";
+			gets(reg.lturistico);
+		}
+		//do
+		
+		do
+		{
+			cout<<"Cuantas habitaciones simples desea: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		reg.HabS =atoi(aux);
+		
+		do
+		{
+			cout<<"Cuantas habitaciones Dobles desea: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		reg.HabD =atoi(aux);
+		
+		do
+		{
+			cout<<"Cuantas habitaciones Matrimoniales desea: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		reg.HabM =atoi(aux);
+		
+		reg.Importe = ((reg.HabS *150)+(reg.HabD *100)+(reg.HabM *200))*reg.dias ;
+		cout<<"Importe total es: "<<reg.Importe<<"   " ;
+		
+		//while((reg.Importe )<=0);
+		
+		reg.estado='A';
+		fwrite(&reg,sizeof(reg),1,ptr);
+		cout<<"Registro fue adicionado exitosamente.";
+		fclose(ptr);
+	}
+	else
+	{
+		cout<<"El archivo no existe.";
+	}
+
+}
+
+
+
+void modificarRegistroreserva(int nReg)
+{
+	FILE*ptr;
+	int val;
+	char aux[30];
+	regReserva reg;
+	ptr=fopen("reserva.dat","r+b");
+	if(ptr!=NULL)
+	{
+		fseek(ptr,(nReg-1)*sizeof(reg),SEEK_SET);
+		fread(&reg,sizeof(reg),1,ptr);
+		if(!feof(ptr))
+		{
+			if(reg.estado=='A')
+			{
+		
+		
+		do
+		{
+			cout<<"Ingrese IdCliente: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		reg.IdCliente=atoi(aux);
+		while(verificarRepCliente (reg.IdCliente )) 
+		{
+			do
+			{
+				cout<<"Ingrese IdCliente: ";
+				do
+				{
+
+					gets(aux);
+				}
+				while(strlen(aux)==0);
+			}
+			while((validar(aux)==1));
+			reg.IdCliente=atoi(aux);
+		}
+		
+		
+		do
+		{
+			cout<<"Ingrese IdDestino: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		reg.IdDestino=atoi(aux);
+		while(verificarRepDestino (reg.IdDestino )) 
+		{
+			do
+			{
+				cout<<"Ingrese IdDestino: ";
+				do
+				{
+
+					gets(aux);
+				}
+				while(strlen(aux)==0);
+			}
+			while((validar(aux)==1));
+			reg.IdDestino=atoi(aux);
+		}
+		
+
+		do
+		{
+			cout<<"Ingrese telefono celular: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		reg.celular=atoi(aux);
+		
+
+		cout<<"Ingrese fecha de estadia: ";
+		do
+		{
+			gets(reg.fechas);
+		}
+		while(strlen(reg.fechas)==0);
+		while(is_fecha (reg.fechas) == false)
+		{
+			cout<<"Ingrese fecha de estadia: ";
+			gets(reg.fechas);
+		}
+
+		do
+		{
+			cout<<"Ingrese los dias de estadia: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		reg.dias=atoi(aux);
+		
+
+		cout<<"Ingrese lugar turistico a visitar: ";
+		do
+		{
+			gets(reg.lturistico);
+		}
+		while(strlen(reg.lturistico)==0);
+		while(validarNombres(reg.lturistico) == false)
+		{
+			cout<<"Ingrese lugar turistico a visitar: ";
+			gets(reg.lturistico);
+		}
+		//do
+		
+		do
+		{
+			cout<<"Cuantas habitaciones simples desea: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		reg.HabS =atoi(aux);
+		
+		do
+		{
+			cout<<"Cuantas habitaciones Dobles desea: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		reg.HabD =atoi(aux);
+		
+		do
+		{
+			cout<<"Cuantas habitaciones Matrimoniales desea: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		reg.HabM =atoi(aux);
+		
+		reg.Importe = ((reg.HabS *150)+(reg.HabD *100)+(reg.HabM *200))*reg.dias;
+		cout<<"Importe total es: "<<reg.Importe<<"   " ;
+		
+		//while((reg.Importe )<=0);
+		
+		reg.estado='A';
+		
+				fseek(ptr,(nReg-1)*sizeof(reg),SEEK_SET);
+				fwrite(&reg,sizeof(reg),1,ptr);
+				cout<<"Registro fue modificado exitosamente.";
+			}
+
+			else 
+			{
+				cout<<"El registro no existe fue eliminado";
+			}
+
+		}
+
+		fclose(ptr);
+	}
+
+	else
+	{
+		cout<<"El archivo no existe.";
+	}
+
+	getch();
+}
+
+
+void eliminarRegistroreserva(int nReg)
+{
+	FILE*ptr;
+	regReserva reg;
+	ptr=fopen("reserva.dat","r+b");
+	if(ptr!=NULL)
+	{
+		fseek(ptr,(nReg-1)*sizeof(reg),SEEK_SET);
+		fread(&reg,sizeof(reg),1,ptr);
+		if(!feof(ptr))
+		{
+			if(reg.estado=='A')
+			{
+					reg.estado='E';
+					fseek(ptr,(nReg-1)*sizeof(reg),SEEK_SET);
+					fwrite(&reg,sizeof(reg),1,ptr);
+					cout<<"Registro fue eliminado exitosamente.";
+				
+			}
+			else 
+			{
+				cout<<"El registro fue eliminado.....";
+			}
+		}
+		else
+		{
+			cout<<"El registro no existe.";
+		}
+
+		fclose(ptr);
+	}
+
+	else
+	{
+		cout<<"El archivo no existe.";
+	}
+
+	getch();
+}
+
+
+
+void mostrarRegistroreserva(regReserva reg,int numeroReg)
+{
+	cout<<endl<<left<<numeroReg<<".-"<<'\t'<<setw(15)<<reg.IdReserva<<setw(15)<<reg.IdCliente <<setw(15)<<reg.IdDestino<<setw(15)<<reg.celular<<setw(15)<<reg.fechas <<setw(15)<<reg.dias <<setw(15)<<reg.lturistico<<setw(15)<<reg.HabS<<setw(15)<<reg.HabD<<setw(15)<<reg.HabM <<setw(15)<<reg.Importe  ;
+}
+
+
+void buscarRegistroreserva(int nReg)
+{
+	FILE*ptr;
+	regReserva reg;
+	ptr=fopen("reserva.dat","rb");
+	if(ptr!=NULL)
+	{
+		fseek(ptr,(nReg-1)*sizeof(reg),SEEK_SET);
+		fread(&reg,sizeof(reg),1,ptr);
+		if(!feof(ptr))
+		{
+			if(reg.estado=='A')
+			{
+				mostrarRegistroreserva(reg,nReg);
+			}
+
+			else 
+			{
+				cout<<"El registro fue eliminado.";
+			}
+		}
+		else 
+		{
+			cout<<"El registro no existe.";
+		}
+		fclose(ptr);
+	}
+	else
+	{
+		cout<<"El archivo no existe`.....";
+	}
+	getch();
+}
+
+
+void listarArchivoreserva()
+{
+	FILE*ptr;
+	regReserva reg;
+	int cont=1;
+	ptr=fopen("reserva.dat","rb");
+	if(ptr!=NULL)
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		system("cls");
+		cout<<endl<<"************************************************      RESERVAS     ***********************************************";
+		cout<<endl<<"   IdReserva		 IdCliente    IdDestino	   celular  fechas  dias   lugar_turistico   Hab.Simple   Hab.Doble  Hab.Matrimonial   Importe      ";
+		cout<<endl<<"==================================================================================================================";
+		while(!feof(ptr))
+		{
+			if(reg.estado=='A')
+			{
+				mostrarRegistroreserva(reg,cont);
+			}
+
+			fread(&reg,sizeof(reg),1,ptr);
+			cont++;
+		}
+		fclose(ptr);
+	}
+	else 
+	{
+		cout<<"El archivo no existe.....";
+	}
+	getch();
+}
+
+void listarArchivoreservasTexto()
+{
+	FILE* ptr;
+	FILE* txt;
+	regReserva reg;
+	int cont=1;
+	ptr=fopen("reserva.dat","rb");
+	txt=fopen("reserva.txt","wt");
+	if(ptr!=NULL)
+	{
+		fread(&reg,sizeof(reg),1,ptr);
+		system("cls");
+		fprintf(txt,"\n******************************      RESERVA     ********************************");
+		fprintf(txt,"\n   IdReserva		 IdCliente    IdDestino	   celular  fechas  dias   lugar_turistico   Hab.Simple   Hab.Doble  Hab.Matrimonial   Importe  ");
+		fprintf(txt,"\n===================================================================================");
+		while(!feof(ptr))
+		{
+			if(reg.estado=='A')
+			{
+				fprintf(txt,"\n%d.-	%d  %d	%d  %d  %s	%d  %s %d  %d  %d  %7.3f ",cont,reg.IdReserva,reg.IdCliente, reg.IdDestino ,reg.celular ,reg.fechas ,reg.dias ,reg.lturistico ,reg.HabS ,reg.HabD ,reg.HabM ,reg.Importe  );
+			}
+
+			fread(&reg,sizeof(reg),1,ptr);
+			cont++;
+		}
+		fclose(txt);
+		fclose(ptr);
+		system("reserva.txt");
+	}
+	else 
+	{
+		cout<<"El archivo no existe.....";
+	}
+	getch();
+}
+
+
+void menuReservas()
+{
+	int opcion=0,nReg=0;
+	char aux[30];
+	do
+	{
+		system("cls");
+		cout<<"****** M E N U   R E S E R V A S ******"<<endl;
+		cout<<"1.- Crear archivo"<<endl;
+		cout<<"2.- Adicionar Registro"<<endl;
+		cout<<"3.- Modificar Registro"<<endl;
+		cout<<"4.- Eliminar Registro"<<endl;
+		cout<<"5.- Buscar por numero de registro"<<endl;
+		cout<<"6.- Listar todo el archivo"<<endl;
+		cout<<"7.- Listar todo el archivo para imprimir"<<endl;
+		cout<<"0.- Salir"<<endl;
+		do
+		{
+			cout<<"Seleccion una opcion: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		opcion=atoi(aux);
+		switch(opcion)
+		{
+case 1: crearArchivoreserva();
+	break;
+case 2: adicionarRegistroreserva();
+	break;
+case 3: cout<<"\nIngresar numero de registro a modificar : ";
+	cin>>nReg; 
+	modificarRegistroreserva(nReg); 
+	break;
+case 4: cout<<"\nIngresar numero de registro a Eliminar : "; 
+	cin>>nReg; 
+	eliminarRegistroreserva(nReg);
+	break;
+case 5: cout<<"\nIngresar numero de registro a Buscar : "; 
+	cin>>nReg; 
+	buscarRegistroreserva(nReg);
+	break;
+case 6: listarArchivoreserva();
+	break;
+case 7: listarArchivoreservasTexto();
+	break;
+		}
+
+	}
+	while(opcion!=0);
+}
+
+
+void ReporteReservasPeriodo()
+{
+	FILE*ptr;
+	FILE*ptd;
+	FILE*ptc;
+	regReserva reg;
+	regCliente regc;
+	regDestinos regd;
+	char fecha1[11],fecha2[11];
+	ptr=fopen("reserva.dat","rb");
+	ptd=fopen("destino.dat","rb");
+	ptc=fopen("cliente.dat","rb");
+	do
+	{
+
+		do
+		{
+			cout << "Ingresar Fecha Inicial: ";
+			gets(fecha1) ;
+		}
+
+		while(!is_fecha(fecha1));
+		do
+		{
+			cout << "Ingresar Fecha Final: ";
+			gets(fecha2) ;
+		}
+
+		while(!is_fecha(fecha2));
+	}while(!VerificarRangoFechas(fecha1,fecha2));
+	float total = 0;
+	char numero[100];
+	if(ptr!=NULL)
+	{
+		if(ptd!=NULL){
+			if(ptc!=NULL){
+		cout << endl << endl;
+		cout << endl << "================================================================================================================" << endl;
+		cout << endl << "                                        REPORTE DE RESERVAS                                             " << endl;
+		cout << endl << "================================================================================================================" << endl;
+		cout << "desde: " << fecha1 << " hasta: " << fecha2 << endl;
+
+		cout << endl << "  ID Reserva   Cliente   Ciudad_Destino   Hotel_Destino   celular  fechas  dias   lugar_turistico   Hab.Simple   Hab.Doble  Hab.Matrimonial   Importe" << endl;
+		cout << endl << "================================================================================================================" << endl;
+		fread(&reg,sizeof(reg),1,ptr);
+		while(!feof(ptr))
+		{
+			if((((VerificarRangoFechas(fecha1,reg.fechas))&&((VerificarRangoFechas(reg.fechas,fecha2))))))
+			{
+				
+				int nregc=reg.IdCliente;
+				int nregd=reg.IdDestino;
+				
+				fseek(ptc,(nregc-1)*sizeof(regc),SEEK_SET);
+				fread(&regc,sizeof(regc),1,ptc);
+				if(!feof(ptc))
+				{
+				
+					fseek(ptd,(nregd-1)*sizeof(regd),SEEK_SET);
+					fread(&regd,sizeof(regd),1,ptd);
+					if(!feof(ptd))
+					{
+						total = total + reg.Importe;
+			
+						cout<<"   "<<reg.IdReserva<<setw(15)<<regc.nombre <<setw(20)<<regd.ciudad <<setw(15)<<regd.hotel<<setw(15)<<reg.celular<<setw(15)<<reg.fechas <<setw(15)<<reg.dias <<setw(15)<<reg.lturistico<<setw(15)<<reg.HabS<<setw(15)<<reg.HabD<<setw(15)<<reg.HabM <<setw(15)<<reg.Importe<<"\n"<< endl;
+							
+					}
+				}
+				
+			}
+			cout << "----------------------------------------------------------------------------------------------------------------" << endl;
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+		cout << "Total vendido: "<< total<<endl;
+		RealLiteral(total,numero,"Bolivianos");
+		cout << numero<<endl;
+
+		fclose(ptd);
+		fclose(ptc);
+		fclose(ptr);
+			}
+		}
+	}
+
+	getch();
+}
+
+
+void kardexcliente()
+{
+	FILE*ptr;
+	regCliente reg;
+	ptr=fopen("cliente.dat","rb");
+	int contador=1;
+	char numero[100];
+	if(ptr!=NULL)
+	{
+		cout << endl << endl;
+		cout << endl << "================================================================================================================" << endl;
+		cout << endl << "                                        Kardex de Clientes                                             " << endl;
+		cout << endl << "================================================================================================================" << endl;
+		
+		fread(&reg,sizeof(reg),1,ptr);
+		while(!feof(ptr))
+		{
+
+			cout<<"NroRegistro: "<<contador<< endl;
+			cout<<"IdCliente: "<<reg.IdCliente<< endl;
+			cout<<"Nombre: "<<reg.nombre<< endl;
+			cout<<"Nit: "<<reg.nit<< endl;
+			cout<<"Email: "<<reg.email << endl;
+			cout << "------------------------------------------------------------------" << endl;
+			contador=contador+1;
+			fread(&reg,sizeof(reg),1,ptr);
+		}
+		fclose(ptr);
+		
+	}
+
+	getch();
+}
+
+
+
+void menuInformes()
+{
+	int opcion=0,nReg=0;
+	char aux[30];
+	do
+	{
+		system("cls");
+		cout<<"****** M E N U   I N F O R M E S   G E R E N C I A L E S ******"<<endl;
+		cout<<"1.- Reporte de Reservas"<<endl;
+		cout<<"2.- Kardex cliente"<<endl;
+		cout<<"0.- Salir"<<endl;
+		do
+		{
+			cout<<"Seleccion una opcion: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		opcion=atoi(aux);
+		switch(opcion)
+		{
+case 1: ReporteReservasPeriodo();
+	break;
+case 2: kardexcliente();
+	break;
+		}
+
+	}
+	while(opcion!=0);
+}
+
+
+
+
+void inicio(){
+//	int opcion;
+	char aux[30];
+	regCliente reg;
+//	do
+//	{
+		system("cls");
+		cout << "_-_-_-_-_- LIFE TRAVEL -_-_-_-_-_" << endl;
+
+		cout << "Ingrese usuario (email): ";
+		do
+		{
+			gets(reg.email);
+		} while (strlen(reg.email) == 0);
+
+		cout << "Ingrese password (nombre): ";
+		do
+		{
+			gets(reg.nombre);
+		} while (strlen(reg.nombre) == 0);
+
+//	} while (opcion != 0);
+	session = true;
+
+}
+int main()
+{
+	int opcion;
+	char aux[30];
+	do
+	{
+		system("cls");
+		if (!session)
+		{
+			inicio();
+		}
+		cout<<"_-_-_-_-_- LIFE TRAVEL -_-_-_-_-_"<<endl;
+		cout<<"1. Cliente"<<endl;
+		cout<<"2. Destinos"<<endl;
+		cout<<"3. Reserva"<<endl;
+		cout<<"4. Informes Gerenciales"<<endl;
+
+		/*
+		cout<<"8. Reporte de la bomba con mas ventas en cantidad en un periodo"<<endl;
+		cout<<"12. Reporte de la bomba con mas ventas en cantidad acumulado en un periodo"<<endl;
+		cout<<"13. Reporte del cliente con mas movimiento en monto acumulado en un periodo"<<endl;
+		*/
+		cout<<"0.- Salir"<<endl;
+		do
+		{
+			cout<<"Seleccion una opcion: ";
+			do
+			{
+				gets(aux);
+			}
+			while(strlen(aux)==0);
+		}
+		while((validar(aux)==1));
+		opcion=atoi(aux);
+		switch(opcion){
+		case 1: 
+			menuCliente();
+			break;
+		case 2: 
+			menuDestinos();	
+			break;
+		case 3: 
+			menuReservas();
+			break;
+		case 4: 
+			menuInformes();
+			break;
+		}
+	}
+	while(opcion!=0);
+	return(0); 
+}
+
+
+
